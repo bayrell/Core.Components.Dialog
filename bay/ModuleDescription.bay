@@ -34,7 +34,7 @@ class ModuleDescription implements
 	 * Returns module name
 	 * @return string
 	 */
-	lambda string getName() => "Core.Components.Dialog";
+	lambda string getModuleName() => "Core.Components.Dialog";
 	
 	
 	/**
@@ -123,22 +123,10 @@ class ModuleDescription implements
 	
 	
 	/**
-	 * Init context
-	 * @param ContextInterface context
-	 */
-	public static void initContext(ContextInterface context)
-	{
-	}
-	
-	
-	
-	/**
 	 * Called then module registed in context
 	 * @param ContextInterface context
 	 */
-	public static void onRegister(ContextInterface context)
-	{
-	}
+	public static void onRegister(ContextInterface context){}
 	
 	
 	
@@ -147,6 +135,15 @@ class ModuleDescription implements
 	 * @param Map<mixed> config
 	 */
 	public static void onReadConfig(ContextInterface context, Map<mixed> config){}
+	
+	
+	
+	/**
+	 * Init context
+	 * @param ContextInterface context
+	 */
+	public static void onInitContext(ContextInterface context){}
+	
 	
 	
 }
