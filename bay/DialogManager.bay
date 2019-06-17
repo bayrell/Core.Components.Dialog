@@ -35,24 +35,15 @@ class DialogManager extends CoreManager
 	public DialogModel model;
 	
 	
-	@BindValue{ "model": "input" }
-	@Event{
-		"event": classof KeyDownEvent, 
-		"method_name": "onInputKeyDown",
-	}
-	public assignable UIController input = new UIController();
-	
-	
-	
 	/**
 	 * Input keydown
 	 */
-	public void onInputKeyDown(KeyDownEvent event)
+	public void onInputKeyDown(UIEvent<KeyDownEvent> e)
 	{
-		if (event.keyCode == 13)
+		if (e.event.keyCode == 13)
 		{
 			this.updateModel({
-				"input": event.value,
+				"input": e.event.value,
 			});
 			this.pressButton(DialogModel::BUTTON_RESULT_OK);
 		}
@@ -60,21 +51,12 @@ class DialogManager extends CoreManager
 	
 	
 	
-	@Event{
-		"event": classof MouseClickEvent, 
-		"method_name": "onButtonClick", 
-		"cancel": true 
-	}
-	public assignable UIController button = new UIController();
-	
-	
-	
 	/**
 	 * Button click
 	 */
-	public void onButtonClick(MouseClickEvent event)
+	public void onButtonClick(UIEvent<MouseClickEvent> e)
 	{
-		string tag = event.ui.props.get("@tag", "");
+		string tag = e.event.ui.props.get("@tag", "");
 		this.pressButton(tag);
 	}
 	

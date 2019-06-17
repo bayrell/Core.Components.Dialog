@@ -19,6 +19,11 @@
 namespace Core.Components.Dialog;
 
 use Runtime.RuntimeUtils;
+use Core.UI.Annotations.BindValue;
+use Core.UI.Annotations.Event;
+use Core.UI.Events.KeyboardEvent.KeyDownEvent;
+use Core.UI.Events.MouseEvent.MouseClickEvent;
+use Core.UI.Events.UserEvent.ChangeEvent;
 use Core.UI.Render.CoreView;
 use Core.UI.Render.RenderHelper;
 use Core.Components.Button.Button;
@@ -28,12 +33,6 @@ use Core.Components.Dialog.ModuleDescription;
 
 class Dialog extends CoreView
 {
-	
-	/**
-	 * Returns module name
-	 */
-	lambda string moduleName() => "Core.Components.Dialog";
-	
 	
 	
 	/**
@@ -158,10 +157,33 @@ class Dialog extends CoreView
 	{
 		if (model.style != DialogModel::STYLE_PROMT) return "";
 		return <div @class='dialog_promt'>
-			<input @class='dialog_promt_input' @control='input' value={ model.input } />
+			<input 
+				@class='dialog_promt_input' 
+				@annotations=[
+					new Event{
+						"event": classof KeyDownEvent, 
+						"method_name": "onInputKeyDown",
+					}
+				]
+				@bind="input"
+				value={ model.input }
+			/>
 		</div>;
 	}
 	
+	
+	
+	/**
+	 * Button annotations
+	 */
+	lambda Collection<CoreStruct> button() => 
+	[
+		new Event{
+			"event": classof MouseClickEvent, 
+			"method_name": "onButtonClick", 
+			"cancel": true 
+		}
+	];
 	
 	
 	/**
@@ -170,8 +192,8 @@ class Dialog extends CoreView
 	lambda Collection<UIStruct> renderButtons(DialogModel model)
 	{
 		return <div @class='dialog_buttons'>
-			<Button @control='button' @tag='ok'>OK</Button>
-			<Button @control='button' @tag='cancel'>Cancel</Button>
+			<Button @tag='ok' @annotations={ static::button() }>OK</Button>
+			<Button @tag='cancel' @annotations={ static::button() }>Cancel</Button>
 		</div>;
 	}
 	
