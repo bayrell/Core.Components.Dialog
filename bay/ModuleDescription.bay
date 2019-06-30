@@ -19,9 +19,9 @@
 namespace Core.Components.Dialog;
 
 use Runtime.Exceptions.RuntimeException;
+use Runtime.Interfaces.ComponentInterface;
 use Runtime.Interfaces.ContextInterface;
 use Runtime.Interfaces.ModuleDescriptionInterface;
-use Core.Interfaces.ComponentInterface;
 use Core.UI.Render.RenderContainer;
 
 
@@ -101,24 +101,9 @@ class ModuleDescription implements
 	
 	
 	/**
-	 * Returns required assets
-	 * @return Collection<string>
-	 */	
-	lambda Collection<string> assets(RenderContainer container) => null;
-	
-	
-	
-	/**
 	 * Returns sync loaded files
 	 */		
-	lambda Vector<string> resources(RenderContainer container) => null;
-	
-	
-	
-	/**
-	 * Init render container
-	 */
-	lambda RenderContainer initContainer(RenderContainer container) => container;
+	lambda Vector<string> resources() => null;
 	
 	
 	
