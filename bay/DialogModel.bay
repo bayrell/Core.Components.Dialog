@@ -32,9 +32,12 @@ struct DialogModel extends CoreStruct
 	
 	public bool is_open = false;
 	public bool is_modal = false;
+	public string action = "";
 	public string style = "";
 	public string title = "";
 	public string message = "";
 	public string input = "";
 	public string button_result = "";
+	public string error = "";
+	public mixed tag = null;
 }

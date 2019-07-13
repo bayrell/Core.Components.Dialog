@@ -18,21 +18,40 @@
  
 namespace Core.Components.Dialog;
 
-use Runtime.RuntimeUtils;
-use Core.UI.Annotations.BindValue;
-use Core.UI.Annotations.Event;
+use Core.Annotations.BindValue;
+use Core.Annotations.Event;
 use Core.UI.Events.KeyboardEvent.KeyDownEvent;
 use Core.UI.Events.MouseEvent.MouseClickEvent;
 use Core.UI.Events.UserEvent.ChangeEvent;
-use Core.UI.Render.CoreView;
-use Core.UI.Render.RenderHelper;
+use Core.UI.Component;
 use Core.Components.Button.Button;
+use Core.Components.Dialog.DialogEvent;
 use Core.Components.Dialog.DialogModel;
 use Core.Components.Dialog.ModuleDescription;
 
 
-class Dialog extends CoreView
+class Dialog extends Component
 {
+	
+	public DialogModel model;
+	
+	
+	
+	/**
+	 * Returns model name
+	 */
+	lambda string modelName() => classof DialogModel;
+	
+	
+	
+	/**
+	 * Returns require components
+	 */
+	lambda Collection<string> components() => 
+	[
+		classof Button
+	];
+	
 	
 	
 	/**
@@ -73,17 +92,29 @@ class Dialog extends CoreView
 				box-shadow: 2px 4px 10px 0px rgba(0,0,0,0.5)
 			}
 			%dialog_title, %dialog_message, %dialog_promt{
-				padding-bottom: 10px;
+				padding-bottom: 12px;
 			}
 			%dialog_promt_input{
 				padding: 6px 12px;
 				width: 100%;
 			}
 			%dialog_buttons{
+				padding-top: 12px;
 				text-align: center;
 			}
 			%dialog_buttons %(Button)button{
 				margin: 0 5px;
+			}
+			%dialog_row{
+				padding-bottom: 6px;
+			}
+			%dialog_row:last-child{
+				padding-bottom: 0px;
+			}
+			%dialog_error{
+				color: red;
+				text-align: center;
+				padding-top: 12px;
 			}
 		}
 	;
@@ -123,6 +154,7 @@ class Dialog extends CoreView
 			static::renderMessage(model),
 			static::renderPromt(model),
 			static::renderButtons(model),
+			static::renderError(model),
 		])
 	;
 	
@@ -186,6 +218,7 @@ class Dialog extends CoreView
 	];
 	
 	
+	
 	/**
 	 * Render dialog buttons
 	 */
@@ -197,6 +230,127 @@ class Dialog extends CoreView
 		</div>;
 	}
 	
+	
+	
+	/**
+	 * Render error
+	 */
+	lambda Collection<UIStruct> renderError(DialogModel model)
+	{
+		if (model.error == "") return "";
+		return <div @class='dialog_error'>{ model.error }</div>;
+	}
+	
+	
+	
+	
+	/* ---------------------------------- Events ----------------------------------- */
+	
+	
+	
+	/**
+	 * Show dialog
+	 */
+	public void show(Dict params)
+	{
+		params = params.concat({
+			"action": params.get("action", ""),
+			"input": params.get("input", ""),
+			"is_open": true,
+			"button_result": "",
+			"error": "",
+		});
+		this.updateModel(params);
+	}
+	
+	
+	
+	/**
+	 * Hide dialog
+	 */
+	public void hide()
+	{
+		this.updateModel({"is_open": false, "tag": null, "action": "", "style": ""});
+	}
+	
+	
+	
+	/**
+	 * Validate
+	 */
+	public bool validate()
+	{
+		if (this.model.style == DialogModel::STYLE_PROMT)
+		{
+			if (this.model.input == "")
+			{
+				this.updateModel({
+					"error": "Type input",
+				});
+				return false;
+			}
+		}
+		return true;
+	}
+	
+	
+	
+	/**
+	 * Input keydown
+	 */
+	public void onInputKeyDown(UIEvent<KeyDownEvent> e)
+	{
+		if (e.event.keyCode == 13)
+		{
+			this.updateModel({
+				"input": e.event.value,
+			});
+			this.pressButton(DialogModel::BUTTON_RESULT_OK);
+		}
+	}
+	
+	
+	
+	/**
+	 * Button click
+	 */
+	public void onButtonClick(UIEvent<MouseClickEvent> e)
+	{
+		string tag = e.vdom.props.get("@tag", "");
+		this.pressButton(tag);
+	}
+	
+	
+	
+	/**
+	 * Press button
+	 * @param string value 
+	 */
+	public void pressButton(string value)
+	{
+		if (value == DialogModel::BUTTON_RESULT_OK)
+		{
+			bool is_valid = this.validate();
+			if (not is_valid)
+			{
+				return;
+			}
+		}
+		
+		this.updateModel({
+			"is_open": false,
+			"button_result": value,
+		});
+		this.signalOut
+		(
+			new DialogEvent
+			{
+				"input": this.model.input,
+				"value": value,
+				"model": this.model
+			}
+		);
+	}
 	
 	
 }

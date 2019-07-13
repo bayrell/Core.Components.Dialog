@@ -22,7 +22,7 @@ use Runtime.CoreEvent;
 use Core.Components.Dialog.DialogModel;
 
 
-struct DialogResultEvent extends CoreEvent
+struct DialogEvent extends CoreEvent
 {
 	public string input = "";
 	public string value = "";
