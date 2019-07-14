@@ -253,14 +253,7 @@ class Dialog extends Component
 	 */
 	public void show(Dict params)
 	{
-		params = params.concat({
-			"action": params.get("action", ""),
-			"input": params.get("input", ""),
-			"is_open": true,
-			"button_result": "",
-			"error": "",
-		});
-		this.updateModel(params);
+		this.setModel( this.model.show(params) );
 	}
 	
 	
@@ -270,7 +263,7 @@ class Dialog extends Component
 	 */
 	public void hide()
 	{
-		this.updateModel({"is_open": false, "tag": null, "action": "", "style": ""});
+		this.setModel( this.model.hide() );
 	}
 	
 	
@@ -284,9 +277,7 @@ class Dialog extends Component
 		{
 			if (this.model.input == "")
 			{
-				this.updateModel({
-					"error": "Type input",
-				});
+				this.setModel( this.model.setError("Type input") );
 				return false;
 			}
 		}
@@ -302,9 +293,7 @@ class Dialog extends Component
 	{
 		if (e.event.keyCode == 13)
 		{
-			this.updateModel({
-				"input": e.event.value,
-			});
+			this.setModel( this.model.setInput(e.event.value).setError() );
 			this.pressButton(DialogModel::BUTTON_RESULT_OK);
 		}
 	}
@@ -337,17 +326,17 @@ class Dialog extends Component
 			}
 		}
 		
-		this.updateModel({
-			"is_open": false,
-			"button_result": value,
-		});
+		DialogModel old_model = this.model;
+		this.setModel( this.model.hide(value) );
+		
 		this.signalOut
 		(
 			new DialogEvent
 			{
-				"input": this.model.input,
-				"value": value,
-				"model": this.model
+				"input": old_model.input,
+				"model": old_model,
+				"tag": old_model.tag,
+				"button_result": value,
 			}
 		);
 	}

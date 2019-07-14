@@ -39,5 +39,53 @@ struct DialogModel extends CoreStruct
 	public string input = "";
 	public string button_result = "";
 	public string error = "";
-	public mixed tag = null;
+	public primitive tag = null;
+	
+	
+	
+	/**
+	 * Show dialog
+	 */
+	public DialogModel show(Dict params)
+	{
+		params = params.concat({
+			"action": params.get("action", ""),
+			"input": params.get("input", ""),
+			"is_open": true,
+			"button_result": "",
+			"error": "",
+		});
+		return this.copy(params);
+	}
+	
+	
+	
+	/**
+	 * Hide dialog
+	 */
+	public DialogModel hide(string button_result = "")
+	{
+		return this.copy({"is_open": false, "tag": null, "action": "", "style": "", "button_result": button_result});
+	}
+	
+	
+	
+	/**
+	 * Set error
+	 */
+	public DialogModel setError(string error)
+	{
+		return this.copy({"error": error});
+	}
+	
+	
+	
+	/**
+	 * Set input
+	 */
+	public DialogModel setInput(string input)
+	{
+		return this.copy({"input": input});
+	}
+	
 }

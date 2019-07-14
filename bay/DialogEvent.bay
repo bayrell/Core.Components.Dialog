@@ -25,7 +25,8 @@ use Core.Components.Dialog.DialogModel;
 struct DialogEvent extends CoreEvent
 {
 	public string input = "";
-	public string value = "";
+	public string button_result = "";
+	public primitive tag = null;
 	public DialogModel model = null;
 }
 
