@@ -24,6 +24,7 @@ use Core.UI.Events.KeyboardEvent.KeyDownEvent;
 use Core.UI.Events.MouseEvent.MouseClickEvent;
 use Core.UI.Events.UserEvent.ChangeEvent;
 use Core.UI.Component;
+use Core.UI.PocketModel;
 use Core.Components.Button.Button;
 use Core.Components.Dialog.DialogEvent;
 use Core.Components.Dialog.DialogModel;
@@ -124,7 +125,7 @@ class Dialog extends Component
 	/**
 	 * Component render
 	 */
-	lambda Collection<UIStruct> render(DialogModel model, UIStruct ui)
+	lambda Collection<UIStruct> render(DialogModel model, UIStruct ui, PocketModel pocket)
 	{
 		if (not model.is_open) return "";
 		return 
