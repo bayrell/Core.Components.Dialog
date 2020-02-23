@@ -1,7 +1,7 @@
 /*!
- *  Bayrell Core Library
+ *  Bayrell Runtime Library
  *
- *  (c) Copyright 2018-2019 "Ildar Bikmamatov" <support@bayrell.org>
+ *  (c) Copyright 2016-2020 "Ildar Bikmamatov" <support@bayrell.org>
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,24 +16,24 @@
  *  limitations under the License.
  */
  
-namespace Core.Components.Dialog;
+namespace Runtime.Web.Dialog;
 
 use Runtime.CoreStruct;
 
 
 struct DialogModel extends CoreStruct
 {
-	const string STYLE_PROMT = "promt";
-	const string STYLE_CONFIRM = "confirm";
-	const string STYLE_ALERT = "alert";
-	const string BUTTON_RESULT_OK = "ok";
-	const string BUTTON_RESULT_CANCEL = "cancel";
-	const string BUTTON_RESULT_EXIT = "exit";
+	static const string STYLE_PROMT = "promt";
+	static const string STYLE_CONFIRM = "confirm";
+	static const string STYLE_ALERT = "alert";
+	static const string STYLE_CONTENT = "content";
+	
+	static const string BUTTON_RESULT_OK = "ok";
+	static const string BUTTON_RESULT_CANCEL = "cancel";
+	static const string BUTTON_RESULT_EXIT = "exit";
 	
 	public bool is_open = false;
 	public bool is_modal = false;
-	public string action = "";
-	public string style = "";
 	public string title = "";
 	public string message = "";
 	public string input = "";
@@ -46,15 +46,26 @@ struct DialogModel extends CoreStruct
 	/**
 	 * Show dialog
 	 */
-	public DialogModel show(Dict params)
+	public DialogModel show(Dict params = null)
 	{
-		params = params.concat({
-			"action": params.get("action", ""),
+		if (params == null)
+		{
+			return this.copy
+			{
+				"input": "",
+				"is_open": true,
+				"button_result": "",
+				"error": "",
+			};
+		}
+		
+		params = params.concat
+		{
 			"input": params.get("input", ""),
 			"is_open": true,
 			"button_result": "",
 			"error": "",
-		});
+		};
 		return this.copy(params);
 	}
 	
@@ -65,7 +76,10 @@ struct DialogModel extends CoreStruct
 	 */
 	public DialogModel hide(string button_result = "")
 	{
-		return this.copy({"is_open": false, "tag": null, "action": "", "style": "", "button_result": button_result});
+		return this.copy
+		{
+			"is_open": false, "tag": null, "style": "", "button_result": button_result
+		};
 	}
 	
 	
@@ -75,7 +89,7 @@ struct DialogModel extends CoreStruct
 	 */
 	public DialogModel setError(string error)
 	{
-		return this.copy({"error": error});
+		return this.copy{ "error": error };
 	}
 	
 	
@@ -85,7 +99,7 @@ struct DialogModel extends CoreStruct
 	 */
 	public DialogModel setInput(string input)
 	{
-		return this.copy({"input": input});
+		return this.copy{ "input": input };
 	}
 	
 }

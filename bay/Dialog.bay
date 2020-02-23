@@ -1,7 +1,7 @@
 /*!
- *  Bayrell Core Library
+ *  Bayrell Runtime Library
  *
- *  (c) Copyright 2018-2019 "Ildar Bikmamatov" <support@bayrell.org>
+ *  (c) Copyright 2016-2020 "Ildar Bikmamatov" <support@bayrell.org>
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,19 +16,24 @@
  *  limitations under the License.
  */
  
-namespace Core.Components.Dialog;
+namespace Runtime.Web.Dialog;
 
-use Core.Annotations.BindValue;
-use Core.Annotations.Event;
-use Core.UI.Events.KeyboardEvent.KeyDownEvent;
-use Core.UI.Events.MouseEvent.MouseClickEvent;
-use Core.UI.Events.UserEvent.ChangeEvent;
-use Core.UI.Component;
-use Core.UI.PocketModel;
-use Core.Components.Button.Button;
-use Core.Components.Dialog.DialogEvent;
-use Core.Components.Dialog.DialogModel;
-use Core.Components.Dialog.ModuleDescription;
+use Runtime.MessageRPC;
+use Runtime.Web.Component;
+use Runtime.Web.LayoutModel;
+use Runtime.Web.RenderContainer;
+use Runtime.Web.RenderHelper;
+use Runtime.Web.Annotations.Route;
+use Runtime.Web.Annotations.RouteList;
+use Runtime.Web.Annotations.Template;
+use Runtime.Web.Events.Keyboard.KeyDownEvent;
+use Runtime.Web.Events.Mouse.MouseClickEvent;
+use Runtime.Web.Events.User.ChangeEvent;
+use Runtime.Web.Button.Button;
+use Runtime.Web.Dialog.Dialog;
+use Runtime.Web.Dialog.DialogEvent;
+use Runtime.Web.Dialog.DialogModel;
+use App.Model.IndexPageModel;
 
 
 class Dialog extends Component
@@ -69,6 +74,10 @@ class Dialog extends Component
 			%dialog_box{
 				overflow: auto;
 				overflow-y: scroll;
+				display: none;
+			}
+			%dialog_box.open{
+				display: block;
 			}
 			%dialog_shadow{
 				background-color: #000;
@@ -94,6 +103,9 @@ class Dialog extends Component
 			}
 			%dialog_title, %dialog_message, %dialog_promt{
 				padding-bottom: 12px;
+			}
+			%dialog_title{
+				font-weight: bold;
 			}
 			%dialog_promt_input{
 				padding: 6px 12px;
@@ -125,38 +137,38 @@ class Dialog extends Component
 	/**
 	 * Component render
 	 */
-	lambda Collection<UIStruct> render(DialogModel model, UIStruct ui, PocketModel pocket)
+	lambda html render
+	(
+		LayoutModel layout, DialogModel model, Dict params, html content
+	)
 	{
-		if (not model.is_open) return "";
+		string style = params.get("style", "");
 		return 
-			<div @class='dialog_box'>
+			<div @class="dialog_box" class={ model.is_open ? 'open' : '' }>
 				<div @class='dialog_shadow'></div>
 				<table @class='dialog_wrap'><tr><td>
 					<div @class='dialog'>
-						{ this.renderDialog(model, ui) }
+						{ static::renderDialog(layout, model, style, content) }
 					</div>
 				</td></tr></table>
 			</div>
 		;
-	};
+	}
 	
 	
 	
 	/**
 	 * Render dialog
 	 */
-	lambda Collection<UIStruct> renderDialog
-	(
-		DialogModel model, 
-		UIStruct ui
-	)
-		=> rtl::normalizeUIVector([
-			static::renderTitle(model),
-			static::renderMessage(model),
-			static::renderPromt(model),
-			static::renderButtons(model),
-			static::renderError(model),
-		])
+	lambda html renderDialog(LayoutModel layout, DialogModel model, string style, html content)
+		=> [
+			static::renderTitle(layout, model, style),
+			static::renderMessage(layout, model, style),
+			static::renderPromt(layout, model, style),
+			static::renderContent(layout, model, style, content),
+			static::renderButtons(layout, model, style),
+			static::renderError(layout, model, style),
+		]
 	;
 	
 	
@@ -164,7 +176,7 @@ class Dialog extends Component
 	/**
 	 * Render dialog title
 	 */
-	lambda Collection<UIStruct> renderTitle(DialogModel model)
+	lambda html renderTitle(LayoutModel layout, DialogModel model, string style)
 	{
 		if (model.title == "") return "";
 		return <div @class='dialog_title'>{ model.title }</div>;
@@ -175,7 +187,7 @@ class Dialog extends Component
 	/**
 	 * Render dialog message
 	 */
-	lambda Collection<UIStruct> renderMessage(DialogModel model)
+	lambda html renderMessage(LayoutModel layout, DialogModel model, string style)
 	{
 		if (model.message == "") return "";
 		return <div @class='dialog_message'>{ model.message }</div>;
@@ -186,20 +198,14 @@ class Dialog extends Component
 	/**
 	 * Render dialog promt
 	 */
-	lambda Collection<UIStruct> renderPromt(DialogModel model)
+	lambda html renderPromt(LayoutModel layout, DialogModel model, string style)
 	{
-		if (model.style != DialogModel::STYLE_PROMT) return "";
+		if (style != DialogModel::STYLE_PROMT) return "";
 		return <div @class='dialog_promt'>
 			<input 
-				@class='dialog_promt_input' 
-				@annotations=[
-					new Event{
-						"event": classof KeyDownEvent, 
-						"method_name": "onInputKeyDown",
-					}
-				]
+				@class='dialog_promt_input'
+				@event:KeyDownEvent="onInputKeyDown"
 				@bind="input"
-				value={ model.input }
 			/>
 		</div>;
 	}
@@ -207,27 +213,26 @@ class Dialog extends Component
 	
 	
 	/**
-	 * Button annotations
+	 * Render dialog content
 	 */
-	lambda Collection<CoreStruct> button() => 
-	[
-		new Event{
-			"event": classof MouseClickEvent, 
-			"method_name": "onButtonClick", 
-			"cancel": true 
-		}
-	];
+	lambda html renderContent(LayoutModel layout, DialogModel model, string style, html content)
+	{
+		if (style != DialogModel::STYLE_CONTENT) return "";
+		return <div @class='dialog_content'>
+			{ content }
+		</div>;
+	}
 	
 	
 	
 	/**
 	 * Render dialog buttons
 	 */
-	lambda Collection<UIStruct> renderButtons(DialogModel model)
+	lambda html renderButtons(LayoutModel layout, DialogModel model, string style)
 	{
 		return <div @class='dialog_buttons'>
-			<Button @tag='ok' @annotations={ static::button() }>OK</Button>
-			<Button @tag='cancel' @annotations={ static::button() }>Cancel</Button>
+			<Button @tag='ok' @event:MouseClickEvent="onButtonClick">OK</Button>
+			<Button @tag='cancel' @event:MouseClickEvent="onButtonClick">Cancel</Button>
 		</div>;
 	}
 	
@@ -236,7 +241,7 @@ class Dialog extends Component
 	/**
 	 * Render error
 	 */
-	lambda Collection<UIStruct> renderError(DialogModel model)
+	lambda html renderError(LayoutModel layout, DialogModel model, string style)
 	{
 		if (model.error == "") return "";
 		return <div @class='dialog_error'>{ model.error }</div>;
@@ -245,14 +250,15 @@ class Dialog extends Component
 	
 	
 	
+	#ifdef FRONTEND then
+	
+	
 	/* ---------------------------------- Events ----------------------------------- */
-	
-	
 	
 	/**
 	 * Show dialog
 	 */
-	public void show(Dict params)
+	public void show(Dict params = null)
 	{
 		this.setModel( this.model.show(params) );
 	}
@@ -278,7 +284,7 @@ class Dialog extends Component
 		{
 			if (this.model.input == "")
 			{
-				this.setModel( this.model.setError("Type input") );
+				this.setModel( this.model.setError( _("Type input") ) );
 				return false;
 			}
 		}
@@ -290,11 +296,11 @@ class Dialog extends Component
 	/**
 	 * Input keydown
 	 */
-	public void onInputKeyDown(UIEvent<KeyDownEvent> e)
+	public void onInputKeyDown(KeyDownEvent e)
 	{
-		if (e.event.keyCode == 13)
+		if (e.keyCode == 13)
 		{
-			this.setModel( this.model.setInput(e.event.value).setError() );
+			this.setModel( this.model.setInput(e.value).setError() );
 			this.pressButton(DialogModel::BUTTON_RESULT_OK);
 		}
 	}
@@ -304,9 +310,9 @@ class Dialog extends Component
 	/**
 	 * Button click
 	 */
-	public void onButtonClick(UIEvent<MouseClickEvent> e)
+	public void onButtonClick(MouseClickEvent e)
 	{
-		string tag = e.vdom.props.get("@tag", "");
+		string tag = e.target.params.get("@tag", "");
 		this.pressButton(tag);
 	}
 	
@@ -342,5 +348,7 @@ class Dialog extends Component
 		);
 	}
 	
+	
+	#endif
 	
 }

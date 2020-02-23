@@ -1,7 +1,7 @@
 /*!
- *  Bayrell Core Library
+ *  Bayrell Runtime Library
  *
- *  (c) Copyright 2018-2019 "Ildar Bikmamatov" <support@bayrell.org>
+ *  (c) Copyright 2016-2020 "Ildar Bikmamatov" <support@bayrell.org>
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,14 +15,14 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
+ 
+namespace Runtime.Web.Dialog;
 
-namespace Core.Components.Dialog;
-
-use Runtime.CoreEvent;
-use Core.Components.Dialog.DialogModel;
+use Runtime.Web.Events.UIEvent;
+use Runtime.Web.Dialog.DialogModel;
 
 
-struct DialogEvent extends CoreEvent
+struct DialogEvent extends UIEvent
 {
 	public string input = "";
 	public string button_result = "";

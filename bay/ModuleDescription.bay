@@ -1,7 +1,7 @@
 /*!
- *  Bayrell Core Library
+ *  Bayrell Runtime Library
  *
- *  (c) Copyright 2018-2019 "Ildar Bikmamatov" <support@bayrell.org>
+ *  (c) Copyright 2016-2020 "Ildar Bikmamatov" <support@bayrell.org>
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,8 +15,8 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-
-namespace Core.Components.Dialog;
+ 
+namespace Runtime.Web.Dialog;
 
 use Runtime.Interfaces.AssetsInterface;
 use Runtime.Interfaces.ModuleDescriptionInterface;
@@ -29,7 +29,7 @@ class ModuleDescription implements ModuleDescriptionInterface, AssetsInterface
 	 * Returns module name
 	 * @return string
 	 */
-	lambda string getModuleName() => "Core.Components.Dialog";
+	lambda string getModuleName() => "Runtime.Web.Dialog";
 	
 	
 	/**
@@ -46,8 +46,8 @@ class ModuleDescription implements ModuleDescriptionInterface, AssetsInterface
 	 */	
 	lambda Map<string> requiredModules() =>
 	{
-		'Core.UI': '>=0.3',
-		'Core.Components.Button': '*',
+		"Runtime.Web": "*",
+		"Runtime.Web.Button": "*",
 	};
 	
 	
@@ -56,12 +56,12 @@ class ModuleDescription implements ModuleDescriptionInterface, AssetsInterface
 	 * Returns module files load order
 	 * @return Collection<string>
 	 */
-	lambda Collection<string> getModuleFiles() => 
+	lambda Collection<string> assets() => 
 	[
-		"Core.Components.Dialog/Dialog",
-		"Core.Components.Dialog/DialogModel",
-		"Core.Components.Dialog/DialogEvent",
-		"Core.Components.Dialog/ModuleDescription",
+		"Runtime.Web.Dialog/Dialog",
+		"Runtime.Web.Dialog/DialogModel",
+		"Runtime.Web.Dialog/DialogEvent",
+		"Runtime.Web.Dialog/ModuleDescription",
 	];
 	
 	
@@ -77,31 +77,5 @@ class ModuleDescription implements ModuleDescriptionInterface, AssetsInterface
 	 * Returns sync loaded files
 	 */		
 	lambda Vector<string> resources() => null;
-	
-	
-	
-	/**
-	 * Called then module registed in context
-	 * @param ContextInterface context
-	 */
-	public static void onRegister(ContextInterface context){}
-	
-	
-	
-	/**
-	 * Called then context read config
-	 * @param Map<mixed> config
-	 */
-	public static void onReadConfig(ContextInterface context, Map<mixed> config){}
-	
-	
-	
-	/**
-	 * Init context
-	 * @param ContextInterface context
-	 */
-	public static void onInitContext(ContextInterface context){}
-	
-	
 	
 }
