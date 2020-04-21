@@ -29,14 +29,14 @@ class ModuleDescription implements ModuleDescriptionInterface, AssetsInterface
 	 * Returns module name
 	 * @return string
 	 */
-	lambda string getModuleName() => "Runtime.Web.Dialog";
+	pure string getModuleName() => "Runtime.Web.Dialog";
 	
 	
 	/**
 	 * Returns module name
 	 * @return string
 	 */
-	lambda string getModuleVersion() => "0.1.2";
+	pure string getModuleVersion() => "0.1.2";
 	
 	
 	
@@ -44,7 +44,7 @@ class ModuleDescription implements ModuleDescriptionInterface, AssetsInterface
 	 * Returns required modules
 	 * @return Map<string>
 	 */	
-	lambda Map<string> requiredModules() =>
+	pure Map<string> requiredModules() =>
 	{
 		"Runtime.Web": "*",
 		"Runtime.Web.Button": "*",
@@ -56,7 +56,7 @@ class ModuleDescription implements ModuleDescriptionInterface, AssetsInterface
 	 * Returns module files load order
 	 * @return Collection<string>
 	 */
-	lambda Collection<string> assets() => 
+	pure Collection<string> assets() => 
 	[
 		"Runtime.Web.Dialog/Dialog",
 		"Runtime.Web.Dialog/DialogModel",
@@ -69,13 +69,13 @@ class ModuleDescription implements ModuleDescriptionInterface, AssetsInterface
 	/**
 	 * Returns enities
 	 */
-	lambda Collection<Dict> entities() => null;
+	pure Collection<Dict> entities() => null;
 	
 	
 	
 	/**
 	 * Returns sync loaded files
 	 */		
-	lambda Vector<string> resources() => null;
+	pure Vector<string> resources() => null;
 	
 }

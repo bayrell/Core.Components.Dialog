@@ -46,14 +46,14 @@ class Dialog extends Component
 	/**
 	 * Returns model name
 	 */
-	lambda string modelName() => classof DialogModel;
+	pure string modelName() => classof DialogModel;
 	
 	
 	
 	/**
 	 * Returns require components
 	 */
-	lambda Collection<string> components() => 
+	pure Collection<string> components() => 
 	[
 		classof Button
 	];
@@ -63,7 +63,7 @@ class Dialog extends Component
 	/**
 	 * Component css
 	 */
-	lambda string css(Dict<string> vars) => 
+	pure string css(Dict<string> vars) => 
 		@css{
 			%dialog_box, %dialog_shadow{
 				position: fixed;
@@ -137,7 +137,7 @@ class Dialog extends Component
 	/**
 	 * Component render
 	 */
-	lambda html render
+	pure html render
 	(
 		LayoutModel layout, DialogModel model, Dict params, html content
 	)
@@ -160,7 +160,7 @@ class Dialog extends Component
 	/**
 	 * Render dialog
 	 */
-	lambda html renderDialog(LayoutModel layout, DialogModel model, string style, html content)
+	pure html renderDialog(LayoutModel layout, DialogModel model, string style, html content)
 		=> [
 			static::renderTitle(layout, model, style),
 			static::renderMessage(layout, model, style),
@@ -176,7 +176,7 @@ class Dialog extends Component
 	/**
 	 * Render dialog title
 	 */
-	lambda html renderTitle(LayoutModel layout, DialogModel model, string style)
+	pure html renderTitle(LayoutModel layout, DialogModel model, string style)
 	{
 		if (model.title == "") return "";
 		return <div @class='dialog_title'>{ model.title }</div>;
@@ -187,7 +187,7 @@ class Dialog extends Component
 	/**
 	 * Render dialog message
 	 */
-	lambda html renderMessage(LayoutModel layout, DialogModel model, string style)
+	pure html renderMessage(LayoutModel layout, DialogModel model, string style)
 	{
 		if (model.message == "") return "";
 		return <div @class='dialog_message'>{ model.message }</div>;
@@ -198,7 +198,7 @@ class Dialog extends Component
 	/**
 	 * Render dialog promt
 	 */
-	lambda html renderPromt(LayoutModel layout, DialogModel model, string style)
+	pure html renderPromt(LayoutModel layout, DialogModel model, string style)
 	{
 		if (style != DialogModel::STYLE_PROMT) return "";
 		return <div @class='dialog_promt'>
@@ -215,7 +215,7 @@ class Dialog extends Component
 	/**
 	 * Render dialog content
 	 */
-	lambda html renderContent(LayoutModel layout, DialogModel model, string style, html content)
+	pure html renderContent(LayoutModel layout, DialogModel model, string style, html content)
 	{
 		if (style != DialogModel::STYLE_CONTENT) return "";
 		return <div @class='dialog_content'>
@@ -228,7 +228,7 @@ class Dialog extends Component
 	/**
 	 * Render dialog buttons
 	 */
-	lambda html renderButtons(LayoutModel layout, DialogModel model, string style)
+	pure html renderButtons(LayoutModel layout, DialogModel model, string style)
 	{
 		return <div @class='dialog_buttons'>
 			<Button @tag='ok' @event:MouseClickEvent="onButtonClick">OK</Button>
@@ -241,7 +241,7 @@ class Dialog extends Component
 	/**
 	 * Render error
 	 */
-	lambda html renderError(LayoutModel layout, DialogModel model, string style)
+	pure html renderError(LayoutModel layout, DialogModel model, string style)
 	{
 		if (model.error == "") return "";
 		return <div @class='dialog_error'>{ model.error }</div>;
