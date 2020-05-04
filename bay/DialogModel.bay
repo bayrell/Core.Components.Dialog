@@ -35,9 +35,11 @@ struct DialogModel extends CoreStruct
 	public bool is_open = false;
 	public bool is_modal = false;
 	public string title = "";
-	public string message = "";
+	public string text = "";
 	public string input = "";
 	public string button_result = "";
+	public string message = "";
+	public string success = "";
 	public string error = "";
 	public primitive tag = null;
 	
@@ -55,6 +57,8 @@ struct DialogModel extends CoreStruct
 				"input": "",
 				"is_open": true,
 				"button_result": "",
+				"message": "",
+				"success": "",
 				"error": "",
 			};
 		}
@@ -64,6 +68,8 @@ struct DialogModel extends CoreStruct
 			"input": params.get("input", ""),
 			"is_open": true,
 			"button_result": "",
+			"message": "",
+			"success": "",
 			"error": "",
 		};
 		return this.copy(params);

@@ -124,10 +124,15 @@ class Dialog extends Component
 			%dialog_row:last-child{
 				padding-bottom: 0px;
 			}
-			%dialog_error{
-				color: red;
+			%dialog_result{
 				text-align: center;
 				padding-top: 12px;
+			}
+			%dialog_result.success{
+				color: green;
+			}
+			%dialog_result.error{
+				color: red;
 			}
 		}
 	;
@@ -163,11 +168,11 @@ class Dialog extends Component
 	pure html renderDialog(LayoutModel layout, DialogModel model, string style, html content)
 		=> [
 			static::renderTitle(layout, model, style),
-			static::renderMessage(layout, model, style),
+			static::renderText(layout, model, style),
 			static::renderPromt(layout, model, style),
 			static::renderContent(layout, model, style, content),
 			static::renderButtons(layout, model, style),
-			static::renderError(layout, model, style),
+			static::renderResult(layout, model, style),
 		]
 	;
 	
@@ -187,10 +192,10 @@ class Dialog extends Component
 	/**
 	 * Render dialog message
 	 */
-	pure html renderMessage(LayoutModel layout, DialogModel model, string style)
+	pure html renderText(LayoutModel layout, DialogModel model, string style)
 	{
-		if (model.message == "") return "";
-		return <div @class='dialog_message'>{ model.message }</div>;
+		if (model.text == "") return "";
+		return <div @class='dialog_message'>{ model.text }</div>;
 	}
 	
 	
@@ -241,12 +246,26 @@ class Dialog extends Component
 	/**
 	 * Render error
 	 */
-	pure html renderError(LayoutModel layout, DialogModel model, string style)
+	pure html renderResult(LayoutModel layout, DialogModel model, string style)
 	{
-		if (model.error == "") return "";
-		return <div @class='dialog_error'>{ model.error }</div>;
+		if (model.message == "" and model.success == "" and model.error == "") return "";
+		return
+			<div @class='dialog_result' class={ static::getResultClass(model) }>
+				{ model.message }{ model.success }{ model.error }
+			</div>
+		;
 	}
 	
+	
+	/**
+	 * Returns result class
+	 */
+	pure string getResultClass(DialogModel model)
+	{
+		if (model.success != "") return "success";
+		if (model.error != "") return "error";
+		return "";
+	}
 	
 	
 	
@@ -284,7 +303,7 @@ class Dialog extends Component
 		{
 			if (this.model.input == "")
 			{
-				this.setModel( this.model.setError( _("Type input") ) );
+				this.setModel( this.model.setError( _("Runtime.Web.Dialog", "Type input") ) );
 				return false;
 			}
 		}
@@ -324,6 +343,8 @@ class Dialog extends Component
 	 */
 	public void pressButton(string value)
 	{
+		bool auto_hide = this.params.get("auto_hide", true);
+		
 		if (value == DialogModel::BUTTON_RESULT_OK)
 		{
 			bool is_valid = this.validate();
@@ -334,7 +355,7 @@ class Dialog extends Component
 		}
 		
 		DialogModel old_model = this.model;
-		this.setModel( this.model.hide(value) );
+		if (auto_hide) this.setModel( this.model.hide(value) );
 		
 		this.signalOut
 		(
