@@ -153,7 +153,7 @@ class Dialog extends Component
 				<div @class='dialog_shadow'></div>
 				<table @class='dialog_wrap'><tr><td>
 					<div @class='dialog'>
-						{ static::renderDialog(layout, model, style, content) }
+						{ static::renderDialog(layout, model, params, style, content) }
 					</div>
 				</td></tr></table>
 			</div>
@@ -165,13 +165,13 @@ class Dialog extends Component
 	/**
 	 * Render dialog
 	 */
-	pure html renderDialog(LayoutModel layout, DialogModel model, string style, html content)
+	pure html renderDialog(LayoutModel layout, DialogModel model, Dict params, string style, html content)
 		=> [
 			static::renderTitle(layout, model, style),
 			static::renderText(layout, model, style),
 			static::renderPromt(layout, model, style),
 			static::renderContent(layout, model, style, content),
-			static::renderButtons(layout, model, style),
+			params.get("show_buttons", true) ? static::renderButtons(layout, model, style) : "",
 			static::renderResult(layout, model, style),
 		]
 	;
