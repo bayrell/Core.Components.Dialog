@@ -39,16 +39,6 @@ use App.Model.IndexPageModel;
 class Dialog extends Component
 {
 	
-	public DialogModel model;
-	
-	
-	
-	/**
-	 * Returns model name
-	 */
-	pure string modelName() => classof DialogModel;
-	
-	
 	
 	/**
 	 * Returns require components
@@ -279,7 +269,7 @@ class Dialog extends Component
 	 */
 	public void show(Dict params = null)
 	{
-		this.setModel( this.model.show(params) );
+		this.setModel( this.model().show(params) );
 	}
 	
 	
@@ -289,7 +279,7 @@ class Dialog extends Component
 	 */
 	public void hide()
 	{
-		this.setModel( this.model.hide() );
+		this.setModel( this.model().hide() );
 	}
 	
 	
@@ -303,7 +293,7 @@ class Dialog extends Component
 		{
 			if (this.model.input == "")
 			{
-				this.setModel( this.model.setError( _("Runtime.Web.Dialog", "Type input") ) );
+				this.setModel( this.model().setError( _("Runtime.Web.Dialog", "Type input") ) );
 				return false;
 			}
 		}
@@ -319,7 +309,7 @@ class Dialog extends Component
 	{
 		if (e.keyCode == 13)
 		{
-			this.setModel( this.model.setInput(e.value).setError() );
+			this.setModel( this.model().setInput(e.value).setError() );
 			this.pressButton(DialogModel::BUTTON_RESULT_OK);
 		}
 	}
@@ -355,7 +345,7 @@ class Dialog extends Component
 		}
 		
 		DialogModel old_model = this.model;
-		if (auto_hide) this.setModel( this.model.hide(value) );
+		if (auto_hide) this.setModel( this.model().hide(value) );
 		
 		this.signalOut
 		(
