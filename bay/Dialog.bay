@@ -26,9 +26,9 @@ use Runtime.Web.RenderHelper;
 use Runtime.Web.Annotations.Route;
 use Runtime.Web.Annotations.RouteList;
 use Runtime.Web.Annotations.Template;
-use Runtime.Web.Events.Keyboard.KeyDownEvent;
-use Runtime.Web.Events.Mouse.MouseClickEvent;
-use Runtime.Web.Events.User.ChangeEvent;
+use Runtime.Web.Events.KeyDownEvent;
+use Runtime.Web.Events.MouseClickEvent;
+use Runtime.Web.Events.ChangeEvent;
 use Runtime.Web.Button.Button;
 use Runtime.Web.Dialog.Dialog;
 use Runtime.Web.Dialog.DialogEvent;
@@ -344,16 +344,16 @@ class Dialog extends Component
 			}
 		}
 		
-		DialogModel old_model = this.model;
-		if (auto_hide) this.setModel( this.model().hide(value) );
+		if (auto_hide) this.hide();
+		DialogModel model = this.model();
 		
-		this.signalOut
+		this.signal
 		(
 			new DialogEvent
 			{
-				"input": old_model.input,
-				"model": old_model,
-				"tag": old_model.tag,
+				"input": model.input,
+				"model": model,
+				"tag": model.tag,
 				"button_result": value,
 			}
 		);
