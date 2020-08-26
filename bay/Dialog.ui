@@ -212,7 +212,7 @@ public bool validate()
 	{
 		if (this.model.input == "")
 		{
-			this.commit("setError", _("Runtime.Web.Dialog", "Type input"));
+			this.updateModel("setError", _("Runtime.Web.Dialog", "Type input"));
 			return false;
 		}
 	}
@@ -229,8 +229,8 @@ public async void onInputKeyDown(Message<KeyDownEvent> msg)
 	KeyDownEvent e = msg.data;
 	if (e.keyCode == 13)
 	{
-		this.commit("setInput", e.value);
-		this.commit("setError", "");
+		this.updateModel("setInput", e.value);
+		this.updateModel("setError", "");
 		this.pressButton(DialogModel::BUTTON_RESULT_OK);
 	}
 }
