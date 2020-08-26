@@ -1,3 +1,10 @@
 {
-	"name": "Core.Components.Dialog",
+	"name": "Runtime.Web.Dialog",
+	"files":
+	[
+		"Dialog",
+		"DialogEvent",
+		"DialogModel",
+		"ModuleDescription"
+	]
 }

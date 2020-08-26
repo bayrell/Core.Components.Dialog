@@ -18,10 +18,10 @@
  
 namespace Runtime.Web.Dialog;
 
-use Runtime.CoreStruct;
+use Runtime.BaseStruct;
 
 
-struct DialogModel extends CoreStruct
+struct DialogModel extends BaseStruct
 {
 	static const string STYLE_PROMT = "promt";
 	static const string STYLE_CONFIRM = "confirm";
@@ -48,11 +48,11 @@ struct DialogModel extends CoreStruct
 	/**
 	 * Show dialog
 	 */
-	public DialogModel show(Dict params = null)
+	pure DialogModel show(DialogModel model, Dict params = null)
 	{
 		if (params == null)
 		{
-			return this.copy
+			return model.copy
 			{
 				"input": "",
 				"is_open": true,
@@ -72,7 +72,7 @@ struct DialogModel extends CoreStruct
 			"success": "",
 			"error": "",
 		};
-		return this.copy(params);
+		return model.copy(params);
 	}
 	
 	
@@ -80,11 +80,11 @@ struct DialogModel extends CoreStruct
 	/**
 	 * Hide dialog
 	 */
-	public DialogModel hide(string button_result = "")
+	pure DialogModel hide(DialogModel model, string button_result = "")
 	{
-		return this.copy
+		return model.copy
 		{
-			"is_open": false, "tag": null, "style": "", "button_result": button_result
+			"is_open": false, "tag": null, "button_result": button_result
 		};
 	}
 	
@@ -93,9 +93,9 @@ struct DialogModel extends CoreStruct
 	/**
 	 * Set error
 	 */
-	public DialogModel setError(string error)
+	pure DialogModel setError(DialogModel model, string error)
 	{
-		return this.copy{ "error": error };
+		return model.copy{ "error": error, "success": "", "message": "" };
 	}
 	
 	
@@ -103,9 +103,9 @@ struct DialogModel extends CoreStruct
 	/**
 	 * Set input
 	 */
-	public DialogModel setInput(string input)
+	pure DialogModel setInput(DialogModel model, string input)
 	{
-		return this.copy{ "input": input };
+		return model.copy{ "input": input };
 	}
 	
 }
