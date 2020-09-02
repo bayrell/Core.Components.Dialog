@@ -18,11 +18,8 @@
  
 namespace Runtime.Web.Dialog;
 
-use Runtime.Interfaces.AssetsInterface;
-use Runtime.Interfaces.ModuleDescriptionInterface;
 
-
-class ModuleDescription implements ModuleDescriptionInterface, AssetsInterface
+static class ModuleDescription
 {
 	
 	/**
@@ -53,29 +50,8 @@ class ModuleDescription implements ModuleDescriptionInterface, AssetsInterface
 	
 	
 	/**
-	 * Returns module files load order
-	 * @return Collection<string>
-	 */
-	pure Collection<string> assets() => 
-	[
-		"Runtime.Web.Dialog/Dialog",
-		"Runtime.Web.Dialog/DialogModel",
-		"Runtime.Web.Dialog/DialogEvent",
-		"Runtime.Web.Dialog/ModuleDescription",
-	];
-	
-	
-	
-	/**
 	 * Returns enities
 	 */
 	pure Collection<Dict> entities() => null;
-	
-	
-	
-	/**
-	 * Returns sync loaded files
-	 */		
-	pure Vector<string> resources() => null;
 	
 }

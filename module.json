@@ -1,6 +1,6 @@
 {
 	"name": "Runtime.Web.Dialog",
-	"files":
+	"assets":
 	[
 		"Dialog",
 		"DialogEvent",
