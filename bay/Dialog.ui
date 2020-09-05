@@ -66,7 +66,8 @@
 	z-index: 1002;
 	box-shadow: 2px 4px 10px 0px rgba(0,0,0,0.5)
 }
-%dialog_title, %dialog_message, %dialog_promt{
+%dialog_title, %dialog_text, %dialog_promt{
+	text-align: center;
 	padding-bottom: 12px;
 }
 %dialog_title{
@@ -115,13 +116,12 @@
 
 
 <template name="renderDialog">
-	%var bool show_buttons = (params != null) ? params.get("show_buttons", true) : true;
 	{[
 		static::renderTitle(layout, model, params, content),
 		static::renderText(layout, model, params, content),
 		static::renderPromt(layout, model, params, content),
 		static::renderContent(layout, model, params, content),
-		show_buttons ? static::renderButtons(layout, model, params, content) : "",
+		static::renderButtons(layout, model, params, content),
 		static::renderResult(layout, model, params, content),
 	]}
 </template>
@@ -138,7 +138,7 @@
 <template name="renderText">
 	%if (model.text != "")
 	{
-		<div class='dialog_message'>{ model.text }</div>
+		<div class='dialog_text'>{ model.text }</div>
 	}
 </template>
 
@@ -170,10 +170,14 @@
 
 
 <template name="renderButtons">
+	%var bool show_buttons = (params != null) ? params.get("show_buttons", true) : true;
+	%if (show_buttons)
+	{
 	<div class='dialog_buttons'>
-		<Button @tag='ok' @event:MouseClickEvent="onButtonClick">OK</Button>
-		<Button @tag='cancel' @event:MouseClickEvent="onButtonClick">Cancel</Button>
+		<Button data-action='ok' @event:MouseClickEvent="onButtonClick">OK</Button>
+		<Button data-action='cancel' @event:MouseClickEvent="onButtonClick">Cancel</Button>
 	</div>
+	}
 </template>
 
 
@@ -181,7 +185,7 @@
 	%if (model.message != "" or model.success != "" or model.error == "")
 	{
 		<div class='dialog_result' class={ static::getResultClass(model) }>
-			{ model.message }{ model.success }{ model.error }
+			{ model.message }{ model.success_message }{ model.error_message }
 		</div>
 	}
 </template>
@@ -196,8 +200,8 @@
  */
 pure string getResultClass(DialogModel model)
 {
-	if (model.success != "") return "success";
-	if (model.error != "") return "error";
+	if (model.success_message != "") return "success";
+	if (model.error_message != "") return "error";
 	return "";
 }
 
@@ -212,7 +216,7 @@ public bool validate()
 	{
 		if (this.model.input == "")
 		{
-			this.updateModel("setError", _("Runtime.Web.Dialog", "Type input"));
+			this.update("setError", _("Runtime.Web.Dialog", "Type input"));
 			return false;
 		}
 	}
@@ -229,8 +233,8 @@ public async void onInputKeyDown(Message<KeyDownEvent> msg)
 	KeyDownEvent e = msg.data;
 	if (e.keyCode == 13)
 	{
-		this.updateModel("setInput", e.value);
-		this.updateModel("setError", "");
+		this.update("setInput", e.value);
+		this.update("setError", "");
 		this.pressButton(DialogModel::BUTTON_RESULT_OK);
 	}
 }
@@ -242,7 +246,7 @@ public async void onInputKeyDown(Message<KeyDownEvent> msg)
  */
 public async void onButtonClick(Message<MouseClickEvent> msg)
 {
-	string tag = msg.data.target.params.get("@tag", "");
+	string tag = msg.sender.params.get("data-action", "");
 	await this.pressButton(tag);
 }
 
@@ -265,8 +269,8 @@ public async void pressButton(string value)
 		}
 	}
 	
-	if (auto_hide) this.updateModel("hide");
 	DialogModel model = this.model();
+	if (auto_hide) this.update("hide");
 	
 	await this.signal
 	(

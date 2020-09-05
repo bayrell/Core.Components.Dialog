@@ -19,6 +19,7 @@
 namespace Runtime.Web.Dialog;
 
 use Runtime.BaseStruct;
+use Runtime.Core.RemoteCallAnswer;
 
 
 struct DialogModel extends BaseStruct
@@ -39,8 +40,8 @@ struct DialogModel extends BaseStruct
 	public string input = "";
 	public string button_result = "";
 	public string message = "";
-	public string success = "";
-	public string error = "";
+	public string success_message = "";
+	public string error_message = "";
 	public primitive tag = null;
 	
 	
@@ -58,19 +59,21 @@ struct DialogModel extends BaseStruct
 				"is_open": true,
 				"button_result": "",
 				"message": "",
-				"success": "",
-				"error": "",
+				"success_message": "",
+				"error_message": "",
 			};
 		}
 		
 		params = params.concat
 		{
 			"input": params.get("input", ""),
+			"title": params.get("title", ""),
+			"text": params.get("text", ""),
 			"is_open": true,
 			"button_result": "",
 			"message": "",
-			"success": "",
-			"error": "",
+			"success_message": "",
+			"error_message": "",
 		};
 		return model.copy(params);
 	}
@@ -91,16 +94,6 @@ struct DialogModel extends BaseStruct
 	
 	
 	/**
-	 * Set error
-	 */
-	pure DialogModel setError(DialogModel model, string error)
-	{
-		return model.copy{ "error": error, "success": "", "message": "" };
-	}
-	
-	
-	
-	/**
 	 * Set input
 	 */
 	pure DialogModel setInput(DialogModel model, string input)
@@ -108,4 +101,62 @@ struct DialogModel extends BaseStruct
 		return model.copy{ "input": input };
 	}
 	
+	
+	
+	/**
+	 * Set wait message
+	 */
+	pure DialogModel setWaitMessage(DialogModel model, string message = "") => model.copy
+	{
+		"message": (message != message) ? message : _("Runtime.Web", "Please wait"),
+		"success_message": message,
+		"error_message": "",
+	};
+	
+	
+	
+	/**
+	 * Message
+	 */
+	pure DialogModel setMessage(DialogModel model, string message) => model.copy
+	{
+		"message": "",
+		"success_message": message,
+		"error_message": "",
+	};
+	
+	
+	
+	/**
+	 * Set answer
+	 */
+	pure DialogModel setAnswer(DialogModel model, RemoteCallAnswer answer)
+	{
+		if (answer.isSuccess()) return static::setSuccess(model, answer.success_message);
+		return static::setError(model, answer.error_message);
+	}
+	
+	
+	
+	/**
+	 * Success
+	 */
+	pure DialogModel setSuccess(DialogModel model, string message) => model.copy
+	{
+		"message": "",
+		"success_message": message,
+		"error_message": "",
+	};
+	
+	
+	
+	/**
+	 * Error
+	 */
+	pure DialogModel setError(DialogModel model, string message) => model.copy
+	{
+		"message": "",
+		"success_message": "",
+		"error_message": message,
+	};
 }
