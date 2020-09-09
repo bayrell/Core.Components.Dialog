@@ -104,10 +104,11 @@
 
 
 <template name="render">
+	%var string width = params["width"] |> default string "";
 	<div class="dialog_box" class={ model.is_open ? 'open' : '' }>
 		<div class='dialog_shadow'></div>
 		<table class='dialog_wrap'><tr><td>
-			<div class='dialog'>
+			<div class='dialog' style={ ((width != "") ? "max-width:" ~ width ~ ";" : "") }>
 				{ static::renderDialog(layout, model, params, content) }
 			</div>
 		</td></tr></table>
