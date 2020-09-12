@@ -171,14 +171,52 @@
 
 
 <template name="renderButtons">
-	%var bool show_buttons = (params != null) ? params.get("show_buttons", true) : true;
+	%var Collection buttons = params["buttons"] |> default Collection null;
+	%var fn renderButtons = params["renderButtons"];
+	%var bool show_buttons = params["show_buttons"] |> default bool true;
 	%if (show_buttons)
 	{
-	<div class='dialog_buttons'>
-		<Button data-action='ok' @event:MouseClickEvent="onButtonClick">OK</Button>
-		<Button data-action='cancel' @event:MouseClickEvent="onButtonClick">Cancel</Button>
-	</div>
+		%if (rtl::exists(renderButtons) and rtl::isFn(renderButtons))
+		{
+			<div class='dialog_buttons'>
+				{ renderButtons(layout, model, params, content) }
+			</div>
+		}
+		%else if (rtl::exists(buttons))
+		{
+			<div class='dialog_buttons'>
+			%for (int i=0; i<buttons.count(); i++)
+			{
+				%var Dict button = buttons[i];
+				<Button @event:MouseClickEvent="onButtonClick" ...button>{ button["value"] }</Button>
+			}
+			</div>
+		}
+		%else
+		{
+			<div class='dialog_buttons'>
+				<Button data-action='ok' @event:MouseClickEvent="onButtonClick">OK</Button>
+				<Button data-action='cancel' @event:MouseClickEvent="onButtonClick">Cancel</Button>
+			</div>
+		}
 	}
+</template>
+
+
+<template name="renderButton" args="LayoutModel layout, var model, Dict params, string button_type">
+	%if (button_type == "ok")
+	{
+		<Button data-action="ok" @event:MouseClickEvent="onButtonClick" @key="ok">OK</Button>
+	}
+	%if (button_type == "cancel")
+	{
+		<Button data-action="cancel" @event:MouseClickEvent="onButtonClick" @key="cancel">Cancel</Button>
+	}
+</template>
+
+
+<template name="renderButtonInfo" args="LayoutModel layout, var model, Dict params, Dict button_info">
+	<Button @event:MouseClickEvent="onButtonClick" ...button_info>{ button_info["value"] }</Button>
 </template>
 
 
