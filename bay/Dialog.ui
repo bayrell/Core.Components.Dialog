@@ -23,7 +23,7 @@
 
 <use name="Runtime.Core.Message" />
 <use name="Runtime.Web.LayoutModel" />
-<use name="Runtime.Web.Button.Button" component="true" />
+<use name="Runtime.Web.Input.Button" component="true" />
 <use name="Runtime.Web.Dialog.DialogEvent" />
 <use name="Runtime.Web.Dialog.DialogModel" />
 <use name="Runtime.Web.Events.KeyDownEvent" />
