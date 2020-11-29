@@ -36,6 +36,7 @@ struct DialogModel extends BaseStruct
 	public bool is_open = false;
 	public bool is_modal = false;
 	public string title = "";
+	public string style = "";
 	public string text = "";
 	public string input = "";
 	public string button_result = "";
@@ -159,4 +160,40 @@ struct DialogModel extends BaseStruct
 		"success_message": "",
 		"error_message": message,
 	};
+	
+	
+	
+	/**
+	 * Alert
+	 */
+	pure DialogModel alert(DialogModel model, string text)
+	{
+		model = static::show
+		(
+			model,
+			{
+				"style": static::STYLE_ALERT,
+				"text": text,
+			}
+		);
+		return model;
+	}
+	
+	
+	
+	/**
+	 * Confirm
+	 */
+	pure DialogModel confirm(DialogModel model, string text)
+	{
+		model = static::show
+		(
+			model,
+			{
+				"style": static::STYLE_CONFIRM,
+				"text": text,
+			}
+		);
+		return model;
+	}
 }

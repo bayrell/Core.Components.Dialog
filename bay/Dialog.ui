@@ -77,6 +77,9 @@
 	padding: 6px 12px;
 	width: 100%;
 }
+.dialog_text{
+	white-space: pre-wrap;
+}
 .dialog_buttons{
 	padding-top: 12px;
 	text-align: center;
@@ -145,7 +148,7 @@
 
 
 <template name="renderPromt">
-	%var string style = (params != null) ? params.get("style", "") : "";
+	%var string style = static::getStyle(params, model);
 	%if (style == DialogModel::STYLE_PROMT)
 	{
 		<div class='dialog_promt'>
@@ -160,7 +163,7 @@
 
 
 <template name="renderContent">
-	%var string style = (params != null) ? params.get("style", "") : "";
+	%var string style = static::getStyle(params, model);
 	%if (style == DialogModel::STYLE_CONTENT)
 	{
 		<div class='dialog_content'>
@@ -174,6 +177,7 @@
 	%var Collection buttons = params["buttons"] |> default Collection null;
 	%var fn renderButtons = params["renderButtons"];
 	%var bool show_buttons = params["show_buttons"] |> default bool true;
+	%var string style = static::getStyle(params, model);
 	%if (show_buttons)
 	{
 		%if (rtl::exists(renderButtons) and rtl::isFn(renderButtons))
@@ -190,6 +194,12 @@
 				%var Dict button = buttons[i];
 				<Button @event:MouseClickEvent="onButtonClick" ...button>{ button["value"] }</Button>
 			}
+			</div>
+		}
+		%else if (style == DialogModel::STYLE_ALERT)
+		{
+			<div class='dialog_buttons'>
+				<Button data-action='ok' @event:MouseClickEvent="onButtonClick">OK</Button>
 			</div>
 		}
 		%else
@@ -233,6 +243,18 @@
 
 <script type="frontend">
 
+
+/**
+ * Returns dialog style
+ */
+pure string getStyle(Dict params, DialogModel model)
+{
+	string style = (params != null) ? params.get("style", "") : "";
+	if (style == "") style = model.style;
+	return style;
+}
+	
+ 
 
 /**
  * Returns result class
