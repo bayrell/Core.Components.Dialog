@@ -18,11 +18,11 @@
  
 namespace Runtime.Web.Dialog;
 
-use Runtime.Web.Events.UIEvent;
+use Runtime.Web.Events.BaseEvent;
 use Runtime.Web.Dialog.DialogModel;
 
 
-struct DialogEvent extends UIEvent
+struct DialogEvent extends BaseEvent
 {
 	public string input = "";
 	public string button_result = "";
