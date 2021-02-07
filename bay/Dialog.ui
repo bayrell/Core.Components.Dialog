@@ -96,6 +96,7 @@
 .dialog_result{
 	text-align: center;
 	padding-top: 12px;
+	white-space: break-spaces;
 }
 .dialog_result.success{
 	color: green;
