@@ -1,7 +1,7 @@
 <!--
  *  Bayrell Runtime Library
  *
- *  (c) Copyright 2016-2020 "Ildar Bikmamatov" <support@bayrell.org>
+ *  (c) Copyright 2016-2021 "Ildar Bikmamatov" <support@bayrell.org>
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -64,7 +64,8 @@
 	margin: 0 auto;
 	width: auto;
 	z-index: 1002;
-	box-shadow: 2px 4px 10px 0px rgba(0,0,0,0.5)
+	box-shadow: 2px 4px 10px 0px rgba(0,0,0,0.5);
+	font-size: ${ vars["font", "size"] };
 }
 .dialog_title, .dialog_text, .dialog_promt{
 	text-align: center;
