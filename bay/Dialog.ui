@@ -22,12 +22,14 @@
 >
 
 <use name="Runtime.Core.Message" />
-<use name="Runtime.Web.LayoutModel" />
+<use name="Runtime.Web.ListenerCallback" />
+<use name="Runtime.Web.App.LayoutModel" />
 <use name="Runtime.Web.Input.Button" component="true" />
 <use name="Runtime.Web.Dialog.DialogEvent" />
 <use name="Runtime.Web.Dialog.DialogModel" />
 <use name="Runtime.Web.Events.KeyDownEvent" />
 <use name="Runtime.Web.Events.MouseClickEvent" />
+<use name="Runtime.Web.Events.SignalEvent" />
 
 <style>
 .dialog_box, .dialog_shadow{
@@ -109,12 +111,13 @@
 
 
 <template name="render">
-	%var string width = params["width"] |> default string "";
+	%set DialogModel model = layout.getModel(model_path);
+	%set string width = params["width"] |> default string "";
 	<div class="dialog_box" class={ model.is_open ? 'open' : '' }>
 		<div class='dialog_shadow'></div>
 		<table class='dialog_wrap'><tr><td>
 			<div class='dialog' style={ ((width != "") ? "max-width:" ~ width ~ ";" : "") }>
-				{ static::renderDialog(layout, model, params, content) }
+				{ static::renderDialog(layout, model_path, params, content) }
 			</div>
 		</td></tr></table>
 	</div>
@@ -122,18 +125,20 @@
 
 
 <template name="renderDialog">
+	%set DialogModel model = layout.getModel(model_path);
 	{[
-		static::renderTitle(layout, model, params, content),
-		static::renderText(layout, model, params, content),
-		static::renderPromt(layout, model, params, content),
-		static::renderContent(layout, model, params, content),
-		static::renderButtons(layout, model, params, content),
-		static::renderResult(layout, model, params, content),
+		static::renderTitle(layout, model_path, params, content),
+		static::renderText(layout, model_path, params, content),
+		static::renderPromt(layout, model_path, params, content),
+		static::renderContent(layout, model_path, params, content),
+		static::renderButtons(layout, model_path, params, content),
+		static::renderResult(layout, model_path, params, content),
 	]}
 </template>
 
 
 <template name="renderTitle">
+	%set DialogModel model = layout.getModel(model_path);
 	%if (model.title != "")
 	{
 		<div class='dialog_title'>{ model.title }</div>
@@ -142,6 +147,7 @@
 
 
 <template name="renderText">
+	%set DialogModel model = layout.getModel(model_path);
 	%if (model.text != "")
 	{
 		<div class='dialog_text'>{ model.text }</div>
@@ -150,7 +156,8 @@
 
 
 <template name="renderPromt">
-	%var string style = static::getStyle(params, model);
+	%set DialogModel model = layout.getModel(model_path);
+	%set string style = static::getStyle(params, model);
 	%if (style == DialogModel::STYLE_PROMT)
 	{
 		<div class='dialog_promt'>
@@ -165,7 +172,8 @@
 
 
 <template name="renderContent">
-	%var string style = static::getStyle(params, model);
+	%set DialogModel model = layout.getModel(model_path);
+	%set string style = static::getStyle(params, model);
 	%if (style == DialogModel::STYLE_CONTENT)
 	{
 		<div class='dialog_content'>
@@ -176,10 +184,11 @@
 
 
 <template name="renderButtons">
-	%var Collection buttons = params["buttons"] |> default Collection null;
-	%var fn renderButtons = params["renderButtons"];
-	%var bool show_buttons = params["show_buttons"] |> default bool true;
-	%var string style = static::getStyle(params, model);
+	%set DialogModel model = layout.getModel(model_path);
+	%set Collection buttons = params["buttons"] |> default Collection null;
+	%set fn renderButtons = params["renderButtons"];
+	%set bool show_buttons = params["show_buttons"] |> default bool true;
+	%set string style = static::getStyle(params, model);
 	%if (show_buttons)
 	{
 		%if (rtl::exists(renderButtons) and rtl::isFn(renderButtons))
@@ -193,7 +202,7 @@
 			<div class='dialog_buttons'>
 			%for (int i=0; i<buttons.count(); i++)
 			{
-				%var Dict button = buttons[i];
+				%set Dict button = buttons[i];
 				<Button @event:MouseClickEvent="onButtonClick" ...button>{ button["value"] }</Button>
 			}
 			</div>
@@ -233,6 +242,7 @@
 
 
 <template name="renderResult">
+	%set primitive model = layout.getModel(model_path);
 	%if (model.message != "" or model.success != "" or model.error == "")
 	{
 		<div class='dialog_result' class={ static::getResultClass(model) }>
@@ -244,6 +254,31 @@
 
 
 <script type="frontend">
+
+
+/**
+ * On signal
+ */
+async void onSignal(Message<SignalEvent> msg, ListenerCallback item)
+{
+	SignalEvent signal = msg.data;
+	
+	/* Get dialog model */
+	DialogModel model = this.model();
+	
+	/* Show dialog */
+	if (signal.command == "show")
+	{
+		this.update("setAttr", "is_open", true);
+	}
+	else if (signal.command == "hide")
+	{
+		this.update("setAttr", "is_open", false);
+	}
+	
+	await parent::onSignal(msg, item);
+}
+
 
 
 /**
@@ -335,7 +370,7 @@ public async void pressButton(string value)
 	DialogModel model = this.model();
 	if (auto_hide) this.update("hide");
 	
-	await this.signal
+	await this.sendEvent
 	(
 		new DialogEvent
 		{
