@@ -1,7 +1,7 @@
 /*!
  *  Bayrell Runtime Library
  *
- *  (c) Copyright 2016-2021 "Ildar Bikmamatov" <support@bayrell.org>
+ *  (c) Copyright 2016-2023 "Ildar Bikmamatov" <support@bayrell.org>
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,185 +15,52 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
- 
-namespace Runtime.Web.Dialog;
 
-use Runtime.BaseStruct;
-use Runtime.Core.RemoteCallAnswer;
+namespace Runtime.Widget.Dialog;
+
+use Runtime.Web.BaseModel;
+use Runtime.Widget.ButtonModel;
+use Runtime.Widget.RowButtonsModel;
+use Runtime.Widget.Styles;
 
 
-struct DialogModel extends BaseStruct
+class DialogModel extends BaseModel
 {
-	static const string STYLE_PROMT = "promt";
-	static const string STYLE_CONFIRM = "confirm";
-	static const string STYLE_ALERT = "alert";
-	static const string STYLE_CONTENT = "content";
+	bool is_open = false;
+	string title = "";
+	RowButtonsModel buttons = new RowButtonsModel{
+		"styles": ["@widget_dialog__buttons"]
+	};
+	Styles styles = new Styles{ "prefix": "widget_dialog" };
 	
-	static const string BUTTON_RESULT_OK = "ok";
-	static const string BUTTON_RESULT_CANCEL = "cancel";
-	static const string BUTTON_RESULT_EXIT = "exit";
 	
-	public bool is_open = false;
-	public bool is_modal = false;
-	public string title = "";
-	public string style = "";
-	public string text = "";
-	public string input = "";
-	public string button_result = "";
-	public string message = "";
-	public string success_message = "";
-	public string error_message = "";
-	public primitive tag = null;
-	
+	/**
+	 * Constructor
+	 */
+	void constructor(Dict params = null)
+	{
+		parent(params);
+		if (params)
+		{
+			if (params.has("styles")) this.styles.addStyles(params.get("styles"));
+		}
+	}
 	
 	
 	/**
 	 * Show dialog
 	 */
-	pure DialogModel show(DialogModel model, Dict params = null)
+	void show()
 	{
-		if (params == null)
-		{
-			return model.copy
-			{
-				"input": "",
-				"is_open": true,
-				"button_result": "",
-				"message": "",
-				"success_message": "",
-				"error_message": "",
-			};
-		}
-		
-		params = params.concat
-		{
-			"input": params.get("input", ""),
-			"title": params.get("title", ""),
-			"text": params.get("text", ""),
-			"is_open": true,
-			"button_result": "",
-			"message": "",
-			"success_message": "",
-			"error_message": "",
-		};
-		return model.copy(params);
+		this.is_open = true;
 	}
-	
 	
 	
 	/**
 	 * Hide dialog
 	 */
-	pure DialogModel hide(DialogModel model, string button_result = "")
+	void hide()
 	{
-		return model.copy
-		{
-			"is_open": false, "tag": null, "button_result": button_result
-		};
-	}
-	
-	
-	
-	/**
-	 * Set input
-	 */
-	pure DialogModel setInput(DialogModel model, string input)
-	{
-		return model.copy{ "input": input };
-	}
-	
-	
-	
-	/**
-	 * Set wait message
-	 */
-	pure DialogModel setWaitMessage(DialogModel model, string message = "") => model.copy
-	{
-		"message": (message != message) ? message : _("Runtime.Web", "Please wait"),
-		"success_message": message,
-		"error_message": "",
-	};
-	
-	
-	
-	/**
-	 * Message
-	 */
-	pure DialogModel setMessage(DialogModel model, string message) => model.copy
-	{
-		"message": "",
-		"success_message": message,
-		"error_message": "",
-	};
-	
-	
-	
-	/**
-	 * Set answer
-	 */
-	pure DialogModel setAnswer(DialogModel model, RemoteCallAnswer answer)
-	{
-		if (answer.isSuccess()) return static::setSuccess(model, answer.success_message);
-		return static::setError(model, answer.error_message);
-	}
-	
-	
-	
-	/**
-	 * Success
-	 */
-	pure DialogModel setSuccess(DialogModel model, string message) => model.copy
-	{
-		"message": "",
-		"success_message": message,
-		"error_message": "",
-	};
-	
-	
-	
-	/**
-	 * Error
-	 */
-	pure DialogModel setError(DialogModel model, string message) => model.copy
-	{
-		"message": "",
-		"success_message": "",
-		"error_message": message,
-	};
-	
-	
-	
-	/**
-	 * Alert
-	 */
-	pure DialogModel alert(DialogModel model, string text)
-	{
-		model = static::show
-		(
-			model,
-			{
-				"style": static::STYLE_ALERT,
-				"text": text,
-			}
-		);
-		return model;
-	}
-	
-	
-	
-	/**
-	 * Confirm
-	 */
-	pure DialogModel confirm(DialogModel model, string text)
-	{
-		model = static::show
-		(
-			model,
-			{
-				"style": static::STYLE_CONFIRM,
-				"text": text,
-			}
-		);
-		return model;
+		this.is_open = false;
 	}
 }

@@ -1,10 +1,22 @@
 {
-	"name": "Runtime.Web.Dialog",
+	"name": "Runtime.Widget.Dialog",
 	"assets":
 	[
-		"Dialog",
-		"DialogEvent",
-		"DialogModel",
-		"ModuleDescription"
+		"AppHook.bay",
+		"Dialog.bay",
+		"DialogModel.bay",
+		"ModuleDescription.bay"
+	],
+	"src": "./bay",
+	"dest":
+	{
+		"php": "./php",
+		"es6": "./es6"
+	},
+	"allow":
+	[
+		"\\.bay$",
+		"\\.php$",
+		"\\.js$"
 	]
 }

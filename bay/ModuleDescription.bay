@@ -1,7 +1,7 @@
 /*!
  *  Bayrell Runtime Library
  *
- *  (c) Copyright 2016-2021 "Ildar Bikmamatov" <support@bayrell.org>
+ *  (c) Copyright 2016-2023 "Ildar Bikmamatov" <support@bayrell.org>
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,25 +16,25 @@
  *  limitations under the License.
  */
  
-namespace Runtime.Web.Dialog;
+namespace Runtime.Widget.Dialog;
+
+use Runtime.Entity.Hook;
 
 
 static class ModuleDescription
 {
+	/**
+	 * Returns module name
+	 * @return string
+	 */
+	pure string getModuleName() => "Runtime.Widget.Dialog";
+	
 	
 	/**
 	 * Returns module name
 	 * @return string
 	 */
-	pure string getModuleName() => "Runtime.Web.Dialog";
-	
-	
-	/**
-	 * Returns module name
-	 * @return string
-	 */
-	pure string getModuleVersion() => "0.1.2";
-	
+	pure string getModuleVersion() => "0.12";
 	
 	
 	/**
@@ -44,14 +44,15 @@ static class ModuleDescription
 	pure Map<string> requiredModules() =>
 	{
 		"Runtime.Web": "*",
-		"Runtime.Web.Button": "*",
+		"Runtime.Widget": "*",
 	};
-	
 	
 	
 	/**
 	 * Returns enities
 	 */
-	pure Collection<Dict> entities() => null;
-	
+	pure Collection<Dict> entities() =>
+	[
+		new Hook("Runtime.Widget.Dialog.AppHook"),
+	];
 }
