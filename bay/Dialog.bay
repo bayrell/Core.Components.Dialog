@@ -18,6 +18,7 @@
 
 <class name="Runtime.Widget.Dialog.Dialog">
 
+<use name="Runtime.Widget.Button" component="true" />
 <use name="Runtime.Widget.RowButtons" component="true" />
 
 
@@ -55,7 +56,7 @@
 }
 .widget_dialog__container{
 	position: relative;
-	padding: 20px;
+	padding: calc(var(--widget-space) * 3);
 	background-color: white;
 	max-width: 350px;
 	margin: 0 auto;
@@ -66,11 +67,17 @@
 }
 .widget_dialog__title{
 	font-weight: bold;
-	text-align: center;
-	margin-bottom: var(--widget-space);
+	font-size: var(--widget-font-size-h2);
+	text-align: left;
+	margin: var(--widget-margin-h2);
+	margin-top: 0;
 }
 %(RowButtons)widget_dialog__buttons{
-	margin-top: var(--widget-space);
+	margin: var(--widget-margin-h2);
+	margin-bottom: 0;
+}
+%(RowButtons)widget_dialog__buttons %(Button)widget_button{
+	min-width: 70px;
 }
 </style>
 
