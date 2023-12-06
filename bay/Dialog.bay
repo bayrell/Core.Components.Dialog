@@ -59,7 +59,7 @@
 	padding: calc(var(--widget-space) * 3);
 	background-color: white;
 	max-width: 350px;
-	margin: 0 auto;
+	margin: calc(var(--widget-space) * 5) auto;
 	width: auto;
 	z-index: 1002;
 	box-shadow: 2px 4px 10px 0px rgba(0,0,0,0.5);
@@ -114,6 +114,8 @@
 
 <template name="render">
 	
+	%set Map props = this.getProps();
+	
 	<div class="widget_dialog"
 		class={{ this.model.is_open ? "widget_dialog--open" : "widget_dialog--hide" }}
 		class={{ this.model.styles.join(" ") }}
@@ -121,7 +123,7 @@
 		<div class="widget_dialog__shadow"></div>
 		<div class="widget_dialog__box">
 			<table class="widget_dialog__wrap"><tbody><tr><td>
-				<div class="widget_dialog__container" class={{ this.model.styles.join(" ") }}>
+				<div class="widget_dialog__container" ...props>
 					%render this.renderDialog();
 				</div>
 			</td></tr></tbody></table>
@@ -132,6 +134,19 @@
 
 
 <script>
+
+
+Map getProps()
+{
+	Vector styles = [];
+	if (this.model.width != "")
+	{
+		styles.push("max-width: " ~ this.model.width);
+	}
+	return {
+		"style": styles.join(";"),
+	};
+}
 
 
 </script>

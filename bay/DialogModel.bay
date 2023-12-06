@@ -28,6 +28,8 @@ class DialogModel extends BaseModel
 {
 	bool is_open = false;
 	string title = "";
+	string content = "";
+	string width = "";
 	RowButtonsModel buttons = new RowButtonsModel{
 		"styles": ["@widget_dialog__buttons"]
 	};
@@ -44,6 +46,15 @@ class DialogModel extends BaseModel
 		{
 			if (params.has("styles")) this.styles.addStyles(params.get("styles"));
 		}
+	}
+	
+	
+	/**
+	 * Set width
+	 */
+	void setWidth(string value)
+	{
+		this.width = value;
 	}
 	
 	
