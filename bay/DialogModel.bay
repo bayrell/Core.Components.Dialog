@@ -22,6 +22,7 @@ use Runtime.Web.BaseModel;
 use Runtime.Widget.ButtonModel;
 use Runtime.Widget.RowButtonsModel;
 use Runtime.Widget.Styles;
+use Runtime.Widget.Dialog.Dialog;
 
 
 class DialogModel extends BaseModel
@@ -30,6 +31,7 @@ class DialogModel extends BaseModel
 	string title = "";
 	string content = "";
 	string width = "";
+	string component = classof Dialog;
 	RowButtonsModel buttons = new RowButtonsModel{
 		"styles": ["@widget_dialog__buttons"]
 	};
