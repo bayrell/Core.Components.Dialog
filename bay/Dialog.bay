@@ -20,6 +20,7 @@
 
 <use name="Runtime.Widget.Button" component="true" />
 <use name="Runtime.Widget.RowButtons" component="true" />
+<use name="Runtime.Widget.WidgetResult" component="true" />
 
 
 <style>
@@ -105,10 +106,16 @@
 </template>
 
 
+<template name="renderResult">
+	<WidgetResult @model={{ this.model.result }} />
+</template>
+
+
 <template name="renderDialog">
 	%render this.renderTitle();
 	%render this.renderContent();
 	%render this.renderButtons();
+	%render this.renderResult();
 </template>
 
 
